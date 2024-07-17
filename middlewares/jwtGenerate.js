@@ -7,8 +7,11 @@ const generateToken = (userData = {}) => {
         const token = jwt.sign(payload, secret, {
             expiresIn: '2h'
         })
+
+        return token
     } catch(error) {
         console.log(error)
+
         return false
     }
 }

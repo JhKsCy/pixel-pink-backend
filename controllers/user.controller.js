@@ -37,9 +37,21 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body
     try {
         const dbUser = await User.findOne ({ email });
-        if(!dbuser) return res.status(400).json({
+        if(!dbUser) return res.status(400).json({
             ok: false,
             msg: "User doesn't exist"
+        })
+        const validatePassword = bcrypt.compareSync(password, dbUser.password)
+        if(!validatePassword) return res.status(400).json({
+            ok: false,
+            msg: "Incorrect password"
+        })
+        const token = await generateToken(dbUser._id, dbUser.email)
+
+        return res.status(200).json({
+            ok: true,
+            msg: `${dbUser.email} Bienvenido`,
+            token: token
         })
 
     } catch(error) {
@@ -52,5 +64,6 @@ const loginUser = async (req, res) => {
 }
 
 module.exports = {
-    createUser
+    createUser,
+    loginUser
 }
