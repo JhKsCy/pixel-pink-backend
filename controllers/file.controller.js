@@ -61,11 +61,11 @@ const getFileById = async(req, res) => {
 
 const getAllFiles = async(req, res) => {
     try {
-        const files = await File.findOne();
+        const files = await File.find().select('_id name')
         return res.status(200).json({
             ok: true,
             msg: 'Users found',
-            files: files.name
+            files: files
         })
     } catch(error) {
         console.log(error)
@@ -79,7 +79,7 @@ const getAllFiles = async(req, res) => {
 const deleteFileById = async(req, res) => {
         const {id} = req.params;
     try{
-        const file = await File.findOneAndDelete({ _id: id });
+        const file = await File.findByIdAndDelete(id);
         if (file) return res.status(200).json({
             ok: true,
             msg: 'File deleted successfully'
