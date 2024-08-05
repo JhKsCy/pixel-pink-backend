@@ -1,16 +1,17 @@
 const UserData = require('./../models/UserData')
 
 const createUserData = async(req, res) => {
-    const { name, lastName, phone, state, city, addres, postalCode } = req.body
+    const { name, lastName, phone, state, city, addres, detail, observations } = req.body
     try {
-        const dbUserData = new UsersData({
+        const dbUserData = new UsersDatas({
             name: name,
             lastName: lastName,
             phone: phone,
             state: state,
             city: city,
             addres: addres,
-            postalCode: postalCode
+            detail: detail,
+            observations: observations
         })
         await dbUserData.save()
 
@@ -28,7 +29,7 @@ const createUserData = async(req, res) => {
 }
 
 const updateUserData = async(req, res) => {
-    const { name, lastName, phone, state, city, addres, postalCode } = req.body
+    const { name, lastName, phone, state, city, addres, detail, observations } = req.body
     const { id } = req.params;
     try{
         const updatedData = {};
@@ -38,8 +39,9 @@ const updateUserData = async(req, res) => {
         if (state) updatedData.state = state;
         if (city) updatedData.city = city;
         if (addres) updatedData.addres = addres;
-        if (postalCode) updatedData.postalCode = postalCode;
-        const user = await UserData.updateMany({ id: id }, updateUserData)
+        if (detail) updatedData.detail = detail;
+        if (observations) updatedData.observations = observations;
+        const user = await UserData.findOneAndUpdate({ id: id }, updateUserData)
         if (!user) return res.status(404).json({
             ok: false,
             msg: 'User not found'

@@ -1,7 +1,8 @@
 const Product = require('../models/Product')
+const Size = require('../models/Size')
 
 const newProduct = async(req, res) => {
-    const { name, description, price, available, img, imgDetail, imgAdd } = req.body
+    const { name, price, description, clotheCollection, available, imgA, imgB, imgC, size, quantity } = req.body
     try {
         const product = await Product.findOne({ name: name });
         if(product) return res.status(400).json({
@@ -11,12 +12,15 @@ const newProduct = async(req, res) => {
 
         const dbproduct = new Product({
             name: name,
-            description: description,
             price: price,
+            description: description,
+            clotheCollection: clotheCollection,
             available: available,
-            img: img,
-            imgDetail: imgDetail,
-            imgAdd: imgAdd
+            imgA: imgA,
+            imgB: imgB,
+            imgC: imgC,
+            size: size,
+            quantity: quantity
         })
         await dbproduct.save()
 
@@ -34,17 +38,21 @@ const newProduct = async(req, res) => {
 }
 
 const updateProduct = async(req, res) => {
-    const { name, description, price, available, img, imgDetail, imgAdd } = req.body
+    const { name, price, description, clotheCollection, available, imgA, imgB, imgC, size, quantity } = req.body
     const { id } = req.params;
     try{
         const updatedData = {};
         if (name) updatedData.name = name;
-        if (description) updatedData.description = description;
         if (price) updatedData.price = price;
+        if (description) updatedData.description = description;
+        if (clotheCollection) updatedData.clotheCollection = clotheCollection;
         if (available) updatedData.available = available;
-        if (img) updatedData.img = img;
-        if (imgDetail) updatedData.imgDetail = imgDetail;
-        if (imgAdd) updatedData.imgAdd = imgAdd;
+        if (imgA) updatedData.imgA = imgA;
+        if (imgB) updatedData.imgB = imgB;
+        if (imgC) updatedData.imgC = imgC;
+        if (size) updatedData.size = size;
+        if (quantity) updatedData.quantity = quantity;
+
         const product = await UserData.updateMany({ id: id }, updateProduct)
         if (!product) return res.status(404).json({
             ok: false,
@@ -64,7 +72,32 @@ const updateProduct = async(req, res) => {
     }
 }
 
+const getProductById = async(req, res) => {
+    const {id} = req.params
+    try{
+        const product = await Product.findById({ _id: id });
+        if(product){
+            return res.status(200).json({
+                ok: true,
+                msg: product
+            })
+        }
+        return res.status(404).json({
+            ok: false,
+            msg: 'product not found'
+        })
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            ok:false,
+            msg: 'Please contact our support'
+        })
+    }
+}
+
+
 module.exports = {
     newProduct,
-    updateProduct
+    updateProduct,
+    getProductById
 }

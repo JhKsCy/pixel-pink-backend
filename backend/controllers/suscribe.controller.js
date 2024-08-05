@@ -1,9 +1,9 @@
-const User = require('./../models/Suscribe')
+const Suscriber = require('./../models/Suscribe')
 
 const suscribeUser = async(req, res) => {
     const { name, email } = req.body
     try {
-        const user = await User.findOne({ email: email });
+        const user = await Suscriber.findOne({ email: email });
         if(user) return res.status(400).json({
             ok: false,
             msg: `${email} has already been used`
@@ -28,10 +28,27 @@ const suscribeUser = async(req, res) => {
     }
 }
 
+const findAllSuscribedUsers = async(req, res) => {
+    try {
+        const suscribers = await Suscriber.find();
+        return res.status(200).json({
+            ok: true,
+            msg: 'Suscribers found',
+            suscribers: suscribers.email
+        })
+    } catch {
+        console.log(error) 
+        return res.status(500).json({
+            ok: false,
+            msg: 'Please contact our support'
+    })
+    }
+}
+
 const deleteSuscribedUser = async(req, res) => {
     const {email} = req.param
     try{
-        const user = await User.findOneAndDelete({ email: email });
+        const user = await Suscriber.findOneAndDelete({ email: email });
         if(user) return res.status(200).json({
             ok: true,
             msg: 'The user has been successfully removed from our subscription'
@@ -52,5 +69,6 @@ const deleteSuscribedUser = async(req, res) => {
 
 module.exports = {
     suscribeUser,
+    findAllSuscribedUsers,
     deleteSuscribedUser
 }

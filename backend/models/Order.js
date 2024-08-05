@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'cancelled'],
     default: 'pending',
-  },
+  }
 });
 
 module.exports = mongoose.model('Order', orderSchema);

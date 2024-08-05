@@ -9,6 +9,11 @@ const userSchema = Schema({
     password: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
     }
 })
 
