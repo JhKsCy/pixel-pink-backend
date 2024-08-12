@@ -1,30 +1,32 @@
 const Suscriber = require('./../models/Suscribe')
 
 const suscribeUser = async(req, res) => {
-    const { name, email } = req.body
+    const { name, email } = req.body;
     try {
         const user = await Suscriber.findOne({ email: email });
-        if(user) return res.status(400).json({
-            ok: false,
-            msg: `${email} has already been used`
-        })
+        if (user) {
+            return res.status(400).json({
+                ok: false,
+                msg: `${email} has already been used`
+            });
+        }
 
-        const dbUserSuscribed = new UserSuscribed({
+        const dbUserSuscribed = new Suscriber({
             name: name,
             email: email
-        })
-        await dbUserSuscribed.save()
+        });
+        await dbUserSuscribed.save();
 
         return res.status(201).json({
             ok: true,
             msg: 'User suscribed successfully'
-        })
-    } catch(error) {
-        console.log(error)
+        });
+    } catch (error) {
+        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: 'Please contact our support'
-        })
+        });
     }
 }
 
@@ -34,7 +36,7 @@ const findAllSuscribedUsers = async(req, res) => {
         return res.status(200).json({
             ok: true,
             msg: 'Suscribers found',
-            suscribers: suscribers.email
+            suscribers: suscribers
         })
     } catch {
         console.log(error) 
@@ -46,24 +48,26 @@ const findAllSuscribedUsers = async(req, res) => {
 }
 
 const deleteSuscribedUser = async(req, res) => {
-    const {email} = req.param
-    try{
+    const { email } = req.body;
+    try {
         const user = await Suscriber.findOneAndDelete({ email: email });
-        if(user) return res.status(200).json({
-            ok: true,
-            msg: 'The user has been successfully removed from our subscription'
-        })
+        if (user) {
+            return res.status(200).json({
+                ok: true,
+                msg: 'The user has been successfully removed from our subscription'
+            });
+        }
 
-        return res.status.json({
+        return res.status(404).json({
             ok: false,
-            msg: `${email} is not suscribed`
-        })
-    } catch(error) {
-        console.log(error) 
+            msg: `${email} is not subscribed`
+        });
+    } catch (error) {
+        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: 'Please contact our support'
-    })
+        });
     }
 }
 

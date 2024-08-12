@@ -1,72 +1,80 @@
 const Order = require('./../models/Order')
+const Product = require('./../models/Product')
 
-const addProductToCart = async (req, res) => {
+const createOrder = async (req, res) => {
+    const { products } = req.body;
+
     try {
-        const { productId, quantity } = req.body;
-        const product = await Product.findById(productId);
-        if (!product || !product.available) {
-        return res.status(404).json({ 
-            ok: false,
-            msg: `${product} isn't avalible`
-        });
+        let totalAmount = 0;
+        const allProducts = [];
+
+        for (const item of products) {
+            const product = await Product.findById(item.productId);
+
+            if (!product) {
+                return res.status(404).json({
+                    ok: false,
+                    msg: `Product not found`
+                });
+            }
+
+            totalAmount += product.price * item.quantity;
+
+            allProducts.push({
+                productId: item.productId,
+                quantity: item.quantity,
+            });
         }
-        let order = await Order.findOne({ status: 'pending' });
-        order.totalAmount += product.price * quantity;
+
+        const order = new Order({
+            products: allProducts,
+            totalAmount
+        });
+
         await order.save();
 
-        res.status(200).json({
+        return res.status(201).json({
             ok: true,
-            msg: 'Order created successfully'
+            msg: 'Order created successfully',
+            order: order
         });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
-            ok: false,
+            ok:false,
             msg: 'Please contact our support'
-        })
+        });
     }
 };
 
-const removeProductFromCart = async (req, res) => {
+const getOrderById = async (req, res) => {
+    const { id } = req.params;
+
     try {
-        const { productId } = req.body;
-        let order = await Order.findOne({ status: 'pending' });
+        const order = await Order.findById(id);
+
         if (!order) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 ok: false,
-                msg: `${order} not found`
+                msg: 'Order not found'
             });
         }
 
-        // Buscamos el producto en la orden
-        const productIndex = order.products.findIndex(p => p.productId.toString() === productId);
-        if (productIndex >= 0) {
-        // Si el producto está en la orden, lo eliminamos y actualizamos el total
-        const product = await Product.findById(productId);
-        order.totalAmount -= product.price * order.products[productIndex].quantity;
-        order.products.splice(productIndex, 1);
-        await order.save();
-
-        res.status(200).json({
+        return res.status(200).json({
             ok: true,
-            msg: 'Order updated successfully'
+            msg: 'Order found',
+            order: order
         });
-        } else {
-            return res.status(404).json({ 
-                ok: false,
-                msg: `${product} not found`
-            });
-        }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({
-            ok: false,
+            ok:false,
             msg: 'Please contact our support'
-        })
+        });
     }
 };
 
 module.exports = {
-    addProductToCart,
-    removeProductFromCart
+    createOrder,
+    getOrderById
 };

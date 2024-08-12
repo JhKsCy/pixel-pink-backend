@@ -4,7 +4,7 @@ const { createUserData, updateUserData, deleteUserData } = require('./../control
 const { validateToken } = require('./../middlewares/validateToken')
 
 router.post('/create-data', validateToken, createUserData)
-router.put('/update-data', validateToken, updateUserData)
+router.put('/update-data/:id', validateToken, updateUserData)
 router.delete('/delete-data/:id', validateToken, deleteUserData)
 
 module.exports = router

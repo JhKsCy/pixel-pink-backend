@@ -23,15 +23,15 @@ const productSchema = Schema({
         required: true
     },
     imgA: {
-        type: Object,
+        type: String,
         required: true
     },
     imgB: {
-        type: Object,
+        type: String,
         required: true
     },
     imgC: {
-        type: Object,
+        type: String,
         required: true
     }
 })

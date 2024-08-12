@@ -4,8 +4,8 @@ const { newProduct, updateProduct, getProductById } = require('./../controllers/
 const { upload } = require('./../middlewares/upload')
 const { validateToken } = require('./../middlewares/validateToken')
 
-router.post('/new-product', validateToken, upload.fields([{ name: 'imgA', maxCount: 1 }, { name: 'imgB', maxCount: 1 }, { name: 'imgC', maxCount: 1 }]), newProduct)
-router.put('/update-product/:id', validateToken, upload.fields([{ name: 'imgA', maxCount: 1 }, { name: 'imgB', maxCount: 1 }, { name: 'imgC', maxCount: 1 }]),  updateProduct)
+router.post('/new-product', validateToken, newProduct)
+router.put('/update-product/:id', validateToken, updateProduct)
 router.get('/get-product/:id',  getProductById)
 
 module.exports = router

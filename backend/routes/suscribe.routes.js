@@ -5,6 +5,6 @@ const { suscribeUser, findAllSuscribedUsers, deleteSuscribedUser } = require('./
 
 router.post('/suscribe', suscribeUser)
 router.get('/find-suscribers', findAllSuscribedUsers)
-router.post('/delete-suscribtion', deleteSuscribedUser)
+router.delete('/delete-suscribtion', deleteSuscribedUser)
 
 module.exports = router
