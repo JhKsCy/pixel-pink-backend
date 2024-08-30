@@ -18,6 +18,10 @@ const productSchema = Schema({
         type: String,
         required: true
     },
+    category: {
+        type: String,
+        required: true
+    },
     available: {
         type: Boolean,
         required: true

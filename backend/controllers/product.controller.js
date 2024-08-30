@@ -1,9 +1,9 @@
 const Product = require('../models/Product')
 
 const newProduct = async (req, res) => {
-    const { name, price, description, clotheCollection, available, imgA, imgB, imgC } = req.body;
+    const { name, price, description, clotheCollection, category, available, imgA, imgB, imgC } = req.body;
 
-    if (!name || !price || !description || !clotheCollection || available === undefined || !imgA || !imgB || !imgC) {
+    if (!name || !price || !description || !clotheCollection || !category || available === undefined || !imgA || !imgB || !imgC) {
         return res.status(400).json({
             ok: false,
             msg: 'All fields are required'
@@ -25,6 +25,7 @@ const newProduct = async (req, res) => {
             price,
             description,
             clotheCollection,
+            category,
             available,
             imgA,
             imgB,
@@ -47,7 +48,7 @@ const newProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-    const { name, price, description, clotheCollection, available, imgA, imgB, imgC } = req.body;
+    const { name, price, description, clotheCollection, category, available, imgA, imgB, imgC } = req.body;
     const { id } = req.params;
 
     try {
@@ -56,6 +57,7 @@ const updateProduct = async (req, res) => {
         if (price) updatedData.price = price;
         if (description) updatedData.description = description;
         if (clotheCollection) updatedData.clotheCollection = clotheCollection;
+        if (category) updatedData.category = category;
         if (available !== undefined) updatedData.available = available;
         if (imgA) updatedData.imgA = imgA;
         if (imgB) updatedData.imgB = imgB;
@@ -107,9 +109,74 @@ const getProductById = async(req, res) => {
     }
 }
 
+const getProductsByCollection = async(req, res) => {
+    const {clotheCollection} = req.params
+    try{
+        const product = await Product.find({ clotheCollection: clotheCollection });
+        if(product){
+            return res.status(200).json({
+                ok: true,
+                msg: product
+            })
+        }
+        return res.status(404).json({
+            ok: false,
+            msg: 'product not found'
+        })
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            ok:false,
+            msg: 'Please contact our support'
+        })
+    }
+}
+
+const getProductsByCategory = async(req, res) => {
+    const {category} = req.params
+    try{
+        const product = await Product.find({ category: category });
+        if(product){
+            return res.status(200).json({
+                ok: true,
+                msg: product
+            })
+        }
+        return res.status(404).json({
+            ok: false,
+            msg: 'product not found'
+        })
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            ok:false,
+            msg: 'Please contact our support'
+        })
+    }
+}
+
+const getAllProducts = async(req, res) => {
+    try {
+        const products = await Product.find()
+        return res.status(200).json({
+            ok: true,
+            msg: 'products found',
+            products: products
+        })
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            ok:false,
+            msg: 'Please contact our support'
+        })
+    }
+}
 
 module.exports = {
     newProduct,
     updateProduct,
-    getProductById
+    getProductById,
+    getProductsByCollection,
+    getProductsByCategory,
+    getAllProducts
 }

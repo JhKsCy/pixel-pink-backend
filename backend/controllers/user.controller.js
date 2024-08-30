@@ -49,6 +49,7 @@ const loginUser = async (req, res) => {
         const token = await generateToken(dbUser._id, dbUser.email)
 
         return res.status(200).json({
+            id: dbUser._id,
             ok: true,
             msg: `${dbUser.email} Bienvenido`,
             token: token
@@ -73,15 +74,15 @@ const updateUser = async(req, res) => {
                 msg: 'User not found'
             });
         }
-
+        
         if (password) {
             const salt = bcrypt.genSaltSync();
             const hashedPassword = bcrypt.hashSync(password, salt);
             user.password = hashedPassword;
         }
-
+        
         await user.save();
-
+        
         return res.status(200).json({
             ok: true,
             msg: 'Password updated successfully',
@@ -96,9 +97,94 @@ const updateUser = async(req, res) => {
     }
 }
 
+const getDataById = async(req, res) => {
+    const {id} = req.params
+    try{
+        const userData = await User.findById({ _id: id });
+        if(userData){
+            return res.status(200).json({
+                ok: true,
+                msg: userData
+            })
+        }
+        return res.status(404).json({
+            ok: false,
+            msg: 'User not found'
+        })
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            ok:false,
+            msg: 'Please contact our support'
+        })
+    }
+}
+
+const updateUserData = async(req, res) => {
+    const { name, lastName, phone, state, city, address, detail, observations } = req.body;
+    const { id } = req.params;
+    
+    try {
+        const updatedData = {};
+        if (name) updatedData.name = name;
+        if (lastName) updatedData.lastName = lastName;
+        if (phone) updatedData.phone = phone;
+        if (state) updatedData.state = state;
+        if (city) updatedData.city = city;
+        if (address) updatedData.address = address;
+        if (detail) updatedData.detail = detail;
+        if (observations) updatedData.observations = observations;
+        
+        const userData = await User.findByIdAndUpdate(id, updatedData, { new: true });
+        
+        if (!userData) return res.status(404).json({
+            ok: false,
+            msg: 'Data not found'
+        });
+
+        return res.status(200).json({
+            ok: true,
+            msg: 'Data updated successfully',
+            data: User
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Please contact our support'
+        });
+    }
+}
+
+const deleteUserData = async(req, res) => {
+    const { id } = req.params;
+    try {
+        const dbUserData = await User.findByIdAndDelete(id);
+        if (dbUserData) {
+            return res.status(200).json({
+                ok: true,
+                msg: 'Data deleted successfully'
+            });
+        }
+
+        return res.status(404).json({
+            ok: false,
+            msg: 'Data not found'
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Please contact our support'
+        });
+    }
+}
 
 module.exports = {
     createUser,
     loginUser,
-    updateUser
+    getDataById,
+    updateUser,
+    updateUserData,
+    deleteUserData
 }
