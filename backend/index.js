@@ -3,6 +3,7 @@ const app = express()
 const dotenv = require('dotenv')
 const cors = require('cors')
 const api = require('./routes/api.routes')
+const path = require('path')
 
 dotenv.config();
 const port = process.env.PORT
@@ -13,6 +14,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 app.use('/', api)
+app.use('/', express.static(__dirname + '/dist/frontend/browser'))
+app.get('/*', (req, res, next) => {
+    res.sendFile(path.resolve((__dirname + '/dist/frontend/browser/index.html')))
+})
 
 app.listen(port, () => {
     console.log(`Server connected on ${port} port`)
