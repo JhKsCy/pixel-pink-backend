@@ -64,39 +64,6 @@ const loginUser = async (req, res) => {
     }
 }
 
-const updateUser = async(req, res) => {
-    const { password, email } = req.body;
-    try {
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'User not found'
-            });
-        }
-        
-        if (password) {
-            const salt = bcrypt.genSaltSync();
-            const hashedPassword = bcrypt.hashSync(password, salt);
-            user.password = hashedPassword;
-        }
-        
-        await user.save();
-        
-        return res.status(200).json({
-            ok: true,
-            msg: 'Password updated successfully',
-            user: user
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Please contact our support'
-        });
-    }
-}
-
 const getDataById = async(req, res) => {
     const {id} = req.params
     try{
@@ -184,7 +151,6 @@ module.exports = {
     createUser,
     loginUser,
     getDataById,
-    updateUser,
     updateUserData,
     deleteUserData
 }

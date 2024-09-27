@@ -98,7 +98,7 @@ const getProductById = async(req, res) => {
         }
         return res.status(404).json({
             ok: false,
-            msg: 'product not found'
+            msg: 'Product not found'
         })
     } catch(error) {
         console.log(error)
@@ -121,7 +121,7 @@ const getProductsByCollection = async(req, res) => {
         }
         return res.status(404).json({
             ok: false,
-            msg: 'product not found'
+            msg: 'Product not found'
         })
     } catch(error) {
         console.log(error)
